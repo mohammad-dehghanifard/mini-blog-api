@@ -1,0 +1,16 @@
+{
+  "name": "mini-blog-api",
+  "version": "1.0.0",
+  "description": "Mini blog api developed with JavaScript programming language, NodeJS framework and Moongo database",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "nodemon": "^3.0.1"
+  }
+}
