@@ -2,6 +2,7 @@ exports.getPosts = (req, res, next) => {
   res.status(200).json({
     posts: [
       {
+        _id: new Date().toString(),
         title: 'Hello',
         description: 'Hello welcome to the blog',
         creator :{
@@ -20,9 +21,15 @@ exports.createPost = (req, res, next) => {
 
   res.status(201).json({
     message: 'post created successfully',
-    data: {
+    post: {
+        _id: new Date().toString(),
       title: title,
-      content: content
+      content: content,
+      creator :{
+        name : "mohammad"
+    },
+    createdAt: new Date(),
+    image : 'images/img1.jpg'
     }
-  })
+  });
 }
