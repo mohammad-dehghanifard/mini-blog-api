@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const routes = require("./routers/blog_api");
+const mongoose = require("mongoose");
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.use((req, res, next) => {
 app.use("/api",routes);
 
 
-
-app.listen(8080,() => {console.log("connected...")});
+mongoose.connect("mongodb://127.0.0.1:27017/MiniBlog").then( ()=>{
+    app.listen(8080,() => {console.log("connected...")});
+}).catch(err => {console.log("Error: ",err)})

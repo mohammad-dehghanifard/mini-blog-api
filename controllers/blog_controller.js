@@ -18,7 +18,7 @@ exports.getPosts = (req, res, next) => {
 }
 
 exports.createPost = (req, res, next) => {
-    //validation
+  // validation
   const errors = validationResult(req); 
 
   if(!errors.isEmpty()){
@@ -29,6 +29,7 @@ exports.createPost = (req, res, next) => {
         });
   }
 
+  // create new post
   const title = req.body.title
   const content = req.body.content
   res.status(201).json({
