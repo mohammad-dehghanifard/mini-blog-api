@@ -1,7 +1,8 @@
 const { validationResult } = require('express-validator')
 const Post = require('../models/post')
 
-exports.getPosts = (req, res, next) => {
+// دریافت تمام پست ها
+exports.getAllPost = (req, res, next) => {
   res.status(200).json({
     posts: [
       {
@@ -17,7 +18,7 @@ exports.getPosts = (req, res, next) => {
     ]
   })
 }
-
+//ایجاد پست جدید
 exports.createPost = async (req, res, next) => {
   try {
     // validation
@@ -47,8 +48,28 @@ exports.createPost = async (req, res, next) => {
   } catch (err) {
     // در صورت نداشتن استاتوس کد یعنی اعتبار سنجی به درستی انجام شده اما کد های لاجیک به مشکل خوردن
     if (!err.statusCode) {
-        err.statusCode = 500;
+      err.statusCode = 500
     }
-    next(err);
+    next(err)
+  }
+}
+
+exports.getSinglePost = async (req, res, next) => {
+  try {
+    const postId = req.params.postId
+    const post = await Post.findById(postId)
+
+    if (!post) {
+      const error = new Error('داده ای جهت نمایش یافت نشد')
+      error.statusCode = 404
+      throw error
+    } else {
+      res.status(200).json({ message: 'post featched', post: post })
+    }
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
   }
 }
