@@ -12,10 +12,11 @@ const app = express();
 const storage = multer.diskStorage({
     //cb => call back
     destination: function(req, file, cb){
-        cb(null,'images/');
+        //null => error
+        cb(null,'images');
     },
-    fi: function(req, file, cb){
-        cb(null,file.fieldname + "-" + Date.now());
+    filename: function(req, file, cb){
+        cb(null,file.fieldname+"-"+Date.now()+'.jpg');
     }
     
 });
