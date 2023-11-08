@@ -3,8 +3,35 @@ const bodyParser = require("body-parser");
 const routes = require("./routers/blog_api");
 const mongoose = require("mongoose");
 const path = require("path");
+const multer = require("multer");
+
 
 const app = express();
+
+//image uploader
+const storage = multer.diskStorage({
+    //cb => call back
+    destination: function(req, file, cb){
+        cb(null,'images/');
+    },
+    fi: function(req, file, cb){
+        cb(null,file.fieldname + "-" + Date.now());
+    }
+    
+});
+
+const fileFilter = function(req, file, cb){
+    if(file.mimeType === 'image/png' || 'image/jpeg'){
+        cb(null,true);
+    }else{
+        cb(new Error('file not supported'),false);
+    }
+}
+
+const uploader = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+})
 
 app.use(bodyParser.json()); // application/json
 app.use("/images",express.static(path.join(__dirname,'images')));
@@ -24,6 +51,8 @@ app.use((err, req, res, next) => {
     const message = err.message;
     res.status(status).json({ message: message });
 });
+// file uploader Moddleware
+app.use(uploader.single('image'));
 
 
 app.use("/api",routes);

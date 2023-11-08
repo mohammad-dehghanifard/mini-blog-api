@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator')
 const Post = require('../models/post')
 
+
 // دریافت تمام پست ها
 exports.getAllPost = async (req, res, next) => {
   try {
@@ -25,13 +26,17 @@ exports.createPost = async (req, res, next) => {
       const error = new Error('داده های ارسال شده نا معتبر میباشند!')
       error.statusCode = 422
       throw error
+    }else if(!req.file){
+      const error = new Error('شما هیچ عکسی ارسال نکرده اید!')
+      error.statusCode = 422
+      throw error
     }
 
     // create new post
     const post = new Post({
-      titile: req.body.title,
+      title: req.body.title,
       content: req.body.content,
-      image: 'images/img1.jpg',
+      image: req.file.path,
       creator: {
         name: 'mohammad'
       }
