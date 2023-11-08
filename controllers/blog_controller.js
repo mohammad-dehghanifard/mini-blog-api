@@ -59,16 +59,16 @@ exports.getSinglePost = async (req, res, next) => {
     const post = await Post.findById(postId)
     console.log(post)
     if (!post) {
-      const error = new Error('داده ای جهت نمایش یافت نشد')
-      error.statusCode = 404
-      throw error
+      const error = new Error('داده ای جهت نمایش یافت نشد');
+      error.statusCode = 404;
+      throw error;
+    }else{
+      res.status(200).json({ message: 'post featched', post: post });
     }
-    console.log(post)
-    res.status(200).json({ message: 'post featched', post: post })
   } catch (err) {
     if (!err.statusCode) {
-      err.statusCode = 500
+      err.statusCode = 500;
     }
-    next(err)
+    next(err);
   }
 }
