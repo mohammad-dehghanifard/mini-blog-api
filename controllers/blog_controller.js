@@ -2,21 +2,19 @@ const { validationResult } = require('express-validator')
 const Post = require('../models/post')
 
 // دریافت تمام پست ها
-exports.getAllPost = (req, res, next) => {
-  res.status(200).json({
-    posts: [
-      {
-        _id: new Date().toString(),
-        title: 'Hello',
-        description: 'Hello welcome to the blog',
-        creator: {
-          name: 'mohammad'
-        },
-        createdAt: new Date(),
-        image: 'images/img1.jpg'
-      }
-    ]
-  })
+exports.getAllPost = async (req, res, next) => {
+  try {
+    const postList = await Post.find()
+    res.status(200).json({
+      message: 'all post fetched',
+      posts: postList
+    })
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
+  }
 }
 //ایجاد پست جدید
 exports.createPost = async (req, res, next) => {
@@ -54,18 +52,19 @@ exports.createPost = async (req, res, next) => {
   }
 }
 
+// دریافت یک پست با ایدی
 exports.getSinglePost = async (req, res, next) => {
   try {
-    const postId = req.params.postId
+    const postId = req.params.postId;
     const post = await Post.findById(postId)
-
+    console.log(post)
     if (!post) {
       const error = new Error('داده ای جهت نمایش یافت نشد')
       error.statusCode = 404
       throw error
-    } else {
-      res.status(200).json({ message: 'post featched', post: post })
     }
+    console.log(post)
+    res.status(200).json({ message: 'post featched', post: post })
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500

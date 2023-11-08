@@ -12,6 +12,6 @@ router.post("/add-post",[
     body("content").trim().isLength({min:5}),
 ],blogController.createPost);
 
-router.get("post/:postId",blogController.getSinglePost)
+router.get("/post/:postId",blogController.getSinglePost)
 
 module.exports = router;
