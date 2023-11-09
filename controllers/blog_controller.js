@@ -113,17 +113,17 @@ exports.editPost = async (req, res, next) => {
     image = post.image;
   }
 
-  console.log(post);
-
   if(image !== post.image){
     await clearImage(post.image);
   }
+  
+  console.log(post.image)
 
   post.title = title;
   post.content = content;
   post.image = image;
   await post.save();
-
+  console.log('then:',post.image)
   res.status(200).json(
     {
       message: "save edited post successfully",
