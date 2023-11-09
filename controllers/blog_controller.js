@@ -116,7 +116,7 @@ exports.editPost = async (req, res, next) => {
   if(image !== post.image){
     await clearImage(post.image);
   }
-  
+
   console.log(post.image)
 
   post.title = title;
@@ -130,6 +130,31 @@ exports.editPost = async (req, res, next) => {
       post : post,
     }
   )
+
+}
+
+// حذف پست ها
+exports.deletePost = async (req, res, next) => {
+  try{
+    const postId = req.params.postId;
+    const post = await Post.findById(postId);
+    if(!post){
+      const error = new Error("Post Not Found....");
+      error.statusCode = 404;
+      throw error;
+    }
+    await clearImage(post.image);
+    const deletedPost = await Post.findOneAndDelete(post._id);
+    res.status(200).json({
+      message: "Post deleted...",
+      post: deletedPost
+    })
+  } catch(err){
+    if (!err.statusCode) {
+      err.statusCode = 500
+    }
+    next(err)
+  }
 
 }
 

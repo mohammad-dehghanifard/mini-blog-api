@@ -15,5 +15,7 @@ router.post("/add-post",[
 router.get("/post/:postId",blogController.getSinglePost);
 //ویرایش پست ها
 router.put("/edit-post/:postId",blogController.editPost)
+// حذف پست
+router.delete("/remove-post/:postId",blogController.deletePost);
 
 module.exports = router;
