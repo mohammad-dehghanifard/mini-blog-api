@@ -62,7 +62,6 @@ exports.getSinglePost = async (req, res, next) => {
   try {
     const postId = req.params.postId;
     const post = await Post.findById(postId)
-    console.log(post)
     if (!post) {
       const error = new Error('داده ای جهت نمایش یافت نشد');
       error.statusCode = 404;
@@ -76,4 +75,52 @@ exports.getSinglePost = async (req, res, next) => {
     }
     next(err);
   }
+}
+
+// ویرایش پست ها
+exports.editPost = async (req, res, next) => {
+
+  // validation
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    const error = new Error('داده های ارسال شده نا معتبر میباشند!')
+    error.statusCode = 422
+    throw error
+  }
+
+  // get values
+  const postId = req.params.PostId;
+  const title = req.body.title;
+  const content = req.body.content;
+  let image = req.body.image;
+
+  if(req.file){
+    image = req.file.path;
+  }
+  if(!image){
+    const error = new Error("please upload image");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  const post = await Post.findById(postId);
+
+  if(!post){
+    const error = new Error("no post found...");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  post.title = title;
+  post.content = content;
+  post.image = image;
+  await post.save();
+
+  res.statusCode(200).json(
+    {
+      message: "save edited post successfully",
+      post : post,
+    }
+  )
+
 }
