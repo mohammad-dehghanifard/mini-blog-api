@@ -165,5 +165,4 @@ async function clearImage(imagePath) {
       throw err;
     });
   }
-  console.log("clearing image");
 }
