@@ -1,5 +1,7 @@
-const { validationResult } = require('express-validator')
-const Post = require('../models/post')
+const { validationResult } = require('express-validator');
+const Post = require('../models/post');
+const path = require("path");
+const fs = require('fs');
 
 
 // دریافت تمام پست ها
@@ -89,7 +91,7 @@ exports.editPost = async (req, res, next) => {
   }
 
   // get values
-  const postId = req.params.PostId;
+  const postId = req.params.postId;
   const title = req.body.title;
   const content = req.body.content;
   let image = req.body.image;
@@ -97,11 +99,7 @@ exports.editPost = async (req, res, next) => {
   if(req.file){
     image = req.file.path;
   }
-  if(!image){
-    const error = new Error("please upload image");
-    error.statusCode = 422;
-    throw error;
-  }
+
 
   const post = await Post.findById(postId);
 
@@ -111,16 +109,36 @@ exports.editPost = async (req, res, next) => {
     throw error;
   }
 
+  if(!image){
+    image = post.image;
+  }
+
+  console.log(post);
+
+  if(image !== post.image){
+    await clearImage(post.image);
+  }
+
   post.title = title;
   post.content = content;
   post.image = image;
   await post.save();
 
-  res.statusCode(200).json(
+  res.status(200).json(
     {
       message: "save edited post successfully",
       post : post,
     }
   )
 
+}
+
+async function clearImage(imagePath) {
+  const filePath = path.join(__dirname,"..",imagePath);
+  if( await fs.existsSync(filePath)){
+    fs.unlinkSync(filePath,(err) => {
+      throw err;
+    });
+  }
+  console.log("clearing image");
 }

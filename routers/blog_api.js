@@ -11,7 +11,9 @@ router.post("/add-post",[
     body("title").trim().isLength({min:5}),
     body("content").trim().isLength({min:5}),
 ],blogController.createPost);
-
-router.get("/post/:postId",blogController.getSinglePost)
+//دریافت یک مقاله با ایدی
+router.get("/post/:postId",blogController.getSinglePost);
+//ویرایش پست ها
+router.put("/edit-post/:postId",blogController.editPost)
 
 module.exports = router;
