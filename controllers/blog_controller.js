@@ -51,7 +51,7 @@ exports.createPost = async (req, res, next) => {
       post: post
     });
 
-    
+
   } catch (err) {
     // در صورت نداشتن استاتوس کد یعنی اعتبار سنجی به درستی انجام شده اما کد های لاجیک به مشکل خوردن
     if (!err.statusCode) {
@@ -115,8 +115,9 @@ exports.editPost = async (req, res, next) => {
     image = post.image;
   }
 
-  if(image !== post.image){
+  if(image !== post.image && image !== "undefined"){
     await clearImage(post.image);
+    post.image = image;
   }
 
   console.log(post.image)
