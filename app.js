@@ -1,9 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const routes = require("./routers/blog_api");
+const blogRoute = require("./routers/blog_api");
 const mongoose = require("mongoose");
 const path = require("path");
 const multer = require("multer");
+const authRoute = require("./routers/auth");
 
 
 const app = express();
@@ -56,7 +57,8 @@ app.use((err, req, res, next) => {
 app.use(uploader.single('image'));
 
 
-app.use("/api",routes);
+app.use("/api",blogRoute);
+app.use("/api",authRoute);
 
 
 mongoose.connect("mongodb://127.0.0.1:27017/MiniBlog").then( ()=>{

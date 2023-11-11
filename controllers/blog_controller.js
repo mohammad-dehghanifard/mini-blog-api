@@ -49,7 +49,9 @@ exports.createPost = async (req, res, next) => {
     res.status(201).json({
       message: 'post created successfully',
       post: post
-    })
+    });
+
+    
   } catch (err) {
     // در صورت نداشتن استاتوس کد یعنی اعتبار سنجی به درستی انجام شده اما کد های لاجیک به مشکل خوردن
     if (!err.statusCode) {
