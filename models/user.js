@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     name : {require:true,type: String},
-    username : {require:true,type: String,unique: true},
     email : {require:true,type: String,unique: true},
     password : {require:true,type: String},
     status: {mdefault : "new user",type: String},
