@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 const path = require("path");
 const fs = require('fs');
+const User = require("../models/user");
 
 
 // دریافت تمام پست ها
@@ -39,16 +40,18 @@ exports.createPost = async (req, res, next) => {
       title: req.body.title,
       content: req.body.content,
       image: req.file.path,
-      creator: {
-        name: 'mohammad'
-      }
+      creator: req.userId,
     })
 
-    await post.save()
+    const postResult = await post.save();
+    const user = await User.findById(req.userId);
+    user.posts.push(postResult);
+    const creator = await user.save();
 
     res.status(201).json({
       message: 'post created successfully',
-      post: post
+      post: postResult,
+      creator: creator,
     });
 
 
@@ -117,7 +120,6 @@ exports.editPost = async (req, res, next) => {
 
   if(image !== post.image && image !== "undefined"){
     await clearImage(post.image);
-    post.image = image;
   }
 
   console.log(post.image)
