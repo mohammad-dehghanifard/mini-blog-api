@@ -68,12 +68,13 @@ exports.createPost = async (req, res, next) => {
 exports.getSinglePost = async (req, res, next) => {
   try {
     const postId = req.params.postId;
-    const post = await Post.findById(postId)
+    const post = await Post.findById(postId).populate("creator")
     if (!post) {
       const error = new Error('داده ای جهت نمایش یافت نشد');
       error.statusCode = 404;
       throw error;
     }else{
+      console.log(post)
       res.status(200).json({ message: 'post featched', post: post });
     }
   } catch (err) {
@@ -86,8 +87,8 @@ exports.getSinglePost = async (req, res, next) => {
 
 // ویرایش پست ها
 exports.editPost = async (req, res, next) => {
-
-  // validation
+  try{
+     // validation
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     const error = new Error('داده های ارسال شده نا معتبر میباشند!')
@@ -113,6 +114,12 @@ exports.editPost = async (req, res, next) => {
     error.statusCode = 404;
     throw error;
   }
+  
+  if(post._id !== req.userId){
+    const error = new Error("Authentication field...");
+    error.statusCode = 403;
+    throw error;
+  }
 
   if(!image){
     image = post.image;
@@ -122,7 +129,6 @@ exports.editPost = async (req, res, next) => {
     await clearImage(post.image);
   }
 
-  console.log(post.image)
 
   post.title = title;
   post.content = content;
@@ -134,8 +140,14 @@ exports.editPost = async (req, res, next) => {
       message: "save edited post successfully",
       post : post,
     }
-  )
+  );
 
+  } catch(error){
+    if(!error.statusCode){
+      error.statusCode = 500;
+    }
+    next(error);
+  }
 }
 
 // حذف پست ها
@@ -148,6 +160,13 @@ exports.deletePost = async (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
+
+    if(post._id !== req.userId){
+      const error = new Error("Authentication field...");
+      error.statusCode = 403;
+      throw error;
+    }
+
     await clearImage(post.image);
     const deletedPost = await Post.findOneAndDelete(post._id);
     res.status(200).json({
