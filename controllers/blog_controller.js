@@ -3,6 +3,7 @@ const Post = require('../models/post');
 const path = require("path");
 const fs = require('fs');
 const User = require("../models/user");
+const mongoose = require('mongoose');
 
 
 // دریافت تمام پست ها
@@ -115,7 +116,7 @@ exports.editPost = async (req, res, next) => {
     throw error;
   }
   
-  if(post._id !== req.userId){
+  if(post.creator.toString()!== req.userId){
     const error = new Error("Authentication field...");
     error.statusCode = 403;
     throw error;
@@ -161,7 +162,7 @@ exports.deletePost = async (req, res, next) => {
       throw error;
     }
 
-    if(post._id !== req.userId){
+    if(post.creator.toString() !== req.userId){
       const error = new Error("Authentication field...");
       error.statusCode = 403;
       throw error;
@@ -169,6 +170,12 @@ exports.deletePost = async (req, res, next) => {
 
     await clearImage(post.image);
     const deletedPost = await Post.findOneAndDelete(post._id);
+    // remove post relationl from user
+    const user = await User.findById(req.userId);
+    user.posts.pop(new mongoose.Types.ObjectId(postId));
+    await user.save();
+    
+
     res.status(200).json({
       message: "Post deleted...",
       post: deletedPost
