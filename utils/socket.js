@@ -6,7 +6,7 @@ module.exports = {
          io = socket(httpServer,{
             cors : {
                 origin : "http://localhost:3000",
-                method :["GET","POST"]
+                method :["GET","POST","PUT","DELETE"]
             }
          });
          return io;

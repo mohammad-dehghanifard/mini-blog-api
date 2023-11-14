@@ -10,7 +10,7 @@ const socket = require("../utils/socket");
 // دریافت تمام پست ها
 exports.getAllPost = async (req, res, next) => {
   try {
-    const postList = await Post.find().populate("creator");
+    const postList = await Post.find().populate("creator").sort({createdAt: -1});
     res.status(200).json({
       message: 'all post fetched',
       posts: postList
@@ -163,7 +163,7 @@ exports.editPost = async (req, res, next) => {
   }
 }
 
-// حذف پست ها
+// حذف پست ها 
 exports.deletePost = async (req, res, next) => {
   try{
     const postId = req.params.postId;
@@ -186,6 +186,11 @@ exports.deletePost = async (req, res, next) => {
     const user = await User.findById(req.userId);
     user.posts.pop(new mongoose.Types.ObjectId(postId));
     await user.save();
+
+    socket.getIo().emit("post",{
+      action: "delete",
+      post: postId,
+    })
     
 
     res.status(200).json({
