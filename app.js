@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const multer = require("multer");
 const authRoute = require("./routers/auth");
-
+const socketIo = require("./utils/socket");
 
 const app = express();
 
@@ -62,5 +62,6 @@ app.use("/api",authRoute);
 
 
 mongoose.connect("mongodb://127.0.0.1:27017/MiniBlog").then( ()=>{
-    app.listen(8080,() => {console.log("connected...")});
+    const server = app.listen(8080);
+    const io = socketIo.init(server);
 }).catch(err => {console.log("Error: ",err)})
