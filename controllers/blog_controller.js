@@ -128,11 +128,11 @@ exports.editPost = async (req, res, next) => {
     throw error;
   }
 
-  if(!image){
+  if(!image || image === "undefined"){
     image = post.image;
   }
 
-  if(image !== post.image && image !== "undefined"){
+  if(image !== post.image){
     await clearImage(post.image);
   }
 
@@ -140,8 +140,14 @@ exports.editPost = async (req, res, next) => {
   post.title = title;
   post.content = content;
   post.image = image;
-  await post.save();
-  console.log('then:',post.image)
+  const postResult = await post.save();
+
+  socket.getIo().emit("post",{
+    action : "update",
+    post: postResult
+  })
+
+
   res.status(200).json(
     {
       message: "save edited post successfully",
