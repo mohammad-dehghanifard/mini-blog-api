@@ -10,7 +10,7 @@ const socket = require("../utils/socket");
 // دریافت تمام پست ها
 exports.getAllPost = async (req, res, next) => {
   try {
-    const postList = await Post.find()
+    const postList = await Post.find().populate("creator");
     res.status(200).json({
       message: 'all post fetched',
       posts: postList
@@ -52,7 +52,7 @@ exports.createPost = async (req, res, next) => {
 
     socket.getIo().emit('post',{
       action : "create",
-      post: postResult,
+      post: {...postResult._doc,creator: {_id: req.userId,name: user.name}},
     })
 
     res.status(201).json({
@@ -114,7 +114,7 @@ exports.editPost = async (req, res, next) => {
   }
 
 
-  const post = await Post.findById(postId);
+  const post = await Post.findById(postId).populate("creator");
 
   if(!post){
     const error = new Error("no post found...");
@@ -122,7 +122,7 @@ exports.editPost = async (req, res, next) => {
     throw error;
   }
   
-  if(post.creator.toString()!== req.userId){
+  if(post.creator._bsontype._id.toString()!== req.userId){
     const error = new Error("Authentication field...");
     error.statusCode = 403;
     throw error;
