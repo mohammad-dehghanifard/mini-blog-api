@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require('fs');
 const User = require("../models/user");
 const mongoose = require('mongoose');
+const socket = require("../utils/socket");
 
 
 // دریافت تمام پست ها
@@ -48,6 +49,11 @@ exports.createPost = async (req, res, next) => {
     const user = await User.findById(req.userId);
     user.posts.push(postResult);
     const creator = await user.save();
+
+    socket.getIo().emit('post',{
+      action : "create",
+      post: postResult,
+    })
 
     res.status(201).json({
       message: 'post created successfully',
